@@ -12,6 +12,7 @@ app.get("/", function(req, res) {
 });
 
 io.on("connection", function(socket) {
+  console.log("Connection");
   socket.emit("news", { hello: "world" });
   socket.on("my other event", function(data) {
     console.log(data);
