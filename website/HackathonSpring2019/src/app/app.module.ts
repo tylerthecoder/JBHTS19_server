@@ -14,12 +14,8 @@ import { OfficeComponent } from './office/office.component';
     WarehouseComponent,
     OfficeComponent
   ],
-  imports: [
-    BrowserModule,
-    HttpClientModule,
-    RouterModule.forRoot(appRoutes),
-  ],
+  imports: [BrowserModule, HttpClientModule],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}
