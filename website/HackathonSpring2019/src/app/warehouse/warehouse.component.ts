@@ -9,11 +9,10 @@ declare const google: any;
   styleUrls: ['./warehouse.component.scss']
 })
 export class WarehouseComponent implements OnInit {
-
   private socket;
   private map;
 
-  private appliances = [
+  public appliances = [
     { name: 'Lights' },
     { name: 'Printer' },
     { name: 'Computer Lab' },
@@ -25,28 +24,26 @@ export class WarehouseComponent implements OnInit {
   lng = 7.809007;
   zoom = 2;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
-
     this.map = new google.maps.Map(document.getElementById('map'), {
       zoom: this.zoom,
-      center: {lat: this.lat, lng: this.lng},
+      center: { lat: this.lat, lng: this.lng },
       disableDefaultUI: true,
-      mapTypeId: 'roadmap',
+      mapTypeId: 'roadmap'
     });
 
     this.socket = io('http://ec2-18-232-100-162.compute-1.amazonaws.com:3000/');
 
     this.socket.emit('setAsMain');
 
-    this.socket.on('lat-lng', (coords) => {
+    this.socket.on('lat-lng', coords => {
       console.log(coords);
       const latCoord = parseFloat(coords.lat);
       const lngCoord = parseFloat(coords.lng);
-      this.map.setCenter({lat: latCoord, lng: lngCoord});
+      this.map.setCenter({ lat: latCoord, lng: lngCoord });
       this.map.setZoom(20);
     });
   }
-
 }
