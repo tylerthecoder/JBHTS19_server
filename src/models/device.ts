@@ -2,19 +2,23 @@ import { Document, Schema, Model, model } from "mongoose";
 
 export interface IDeviceModel extends Document {
   name: string;
-  state: string;
+  deviceId: string;
+  isOn: boolean;
   lat: string;
   lng: string;
+  energyPerHour: number;
   timesChanged: number;
   lastChanged: Date;
 }
 
 export var DeviceSchema: Schema = new Schema({
   name: String,
-  state: String,
+  deviceId: String,
+  isOn: Boolean,
   timesChanged: Number,
   lat: String,
   lng: String,
+  energyPerHour: Number,
   lastChanged: Date
 });
 
