@@ -1,0 +1,10 @@
+<button onclick="resetDevices()"> Reset Devices </button>
+
+<script>
+  function resetDevices() {
+    const url = `http://${location.host}/device/reset`;
+    const rawData = await fetch(url);
+    const data = await rawData.text();
+    console.log(data);
+  }
+</script>

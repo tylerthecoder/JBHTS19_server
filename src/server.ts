@@ -18,7 +18,7 @@ const app = express();
 const server = new http.Server(app);
 const io = socketIO(server);
 
-const db = mongoose.connect(
+mongoose.connect(
   "mongodb+srv://Admin:admin@cluster0-xdf3u.mongodb.net/test?retryWrites=true",
   { useNewUrlParser: true },
   () => {
@@ -28,6 +28,10 @@ const db = mongoose.connect(
 
 app.get("/", function(req, res) {
   res.sendFile(path.resolve(__dirname, "../public/index.html"));
+});
+
+app.get("/admin", function(req, res) {
+  res.sendFile(path.resolve(__dirname, "../public/admin.html"));
 });
 
 let theRate: number;
@@ -70,7 +74,7 @@ app.get("/device/all", async function(req, res) {
   res.send(JSON.stringify(data));
 });
 
-app.get("/setDeviceState", async function(req, res) {
+app.get("/device/setState", async function(req, res) {
   const { deviceId, state } = req.query;
   console.log("set device state", deviceId, state);
   const device = await setDeviceState(deviceId, state == "true" ? true : false);
@@ -83,14 +87,14 @@ app.get("/setDeviceState", async function(req, res) {
   res.send("done");
 });
 
-app.get("/setDeviceCords", async function(req, res) {
+app.get("/device/setCoords", async function(req, res) {
   const { deviceId, lat, lng } = req.query;
   console.log("set device cords", deviceId, lat, lng);
   await setDeviceCords(deviceId, lat, lng);
   res.send("done");
 });
 
-app.get("/deviceUpdates", async function(req, res) {
+app.get("/device/getUpdates", async function(req, res) {
   const { deviceId } = req.query;
   console.log("Device Updates", deviceId);
   const updates = await getDeviceUpdates(deviceId);
