@@ -74,9 +74,12 @@ export class WarehouseComponent implements OnInit, OnDestroy {
         if (+marker.deviceId === device.deviceId) {
           console.log(marker);
           marker.onState = device.state;
-          (document.getElementById(
+          const checkElement = document.getElementById(
             `${marker.deviceId}applianceState`
-          ) as HTMLInputElement).checked = marker.onState;
+          ) as HTMLInputElement;
+          if (checkElement) {
+            checkElement.value = marker.onState;
+          }
           if (marker.onState) {
             marker.setIcon(
               'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png'
