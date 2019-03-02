@@ -54,6 +54,15 @@ export function getRate() {
   }
 }
 
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
+
 // device routes
 app.get("/device/reset", async function(req, res) {
   console.log("Resetting devices");
@@ -70,6 +79,7 @@ app.get("/device/resetUpdates", async function(req, res) {
 });
 
 app.get("/device/all", async function(req, res) {
+  console.log("Getting all devices");
   const data = await getAllDevices();
   res.send(JSON.stringify(data));
 });
@@ -118,6 +128,10 @@ io.on("connection", function(socket) {
     mainSocket = socket;
     const devices = await getAllDevices();
     socket.emit("allDevices", devices);
+  });
+
+  socket.on("setCoords", async function(data) {
+    console.log(data);
   });
 
   socket.on("setAsPython", function(data) {
