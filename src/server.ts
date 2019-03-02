@@ -9,7 +9,8 @@ import {
   setDeviceCords,
   getDeviceUpdates,
   getDeviceMetrics,
-  deleteAllDeviceUpdates
+  deleteAllDeviceUpdates,
+  getAllDevices
 } from "./deviceFuncs";
 import { mockDeviceUpdates, mockDevices } from "./deviceMocks";
 
@@ -27,10 +28,6 @@ const db = mongoose.connect(
 
 app.get("/", function(req, res) {
   res.sendFile(path.resolve(__dirname, "../public/index.html"));
-});
-
-app.get("/canvas", function(req, res) {
-  res.sendFile(path.resolve(__dirname, "../public/draw.html"));
 });
 
 let theRate: number;
@@ -54,18 +51,23 @@ export function getRate() {
 }
 
 // device routes
-app.get("/resetDevices", async function(req, res) {
+app.get("/device/reset", async function(req, res) {
   console.log("Resetting devices");
   await deleteAllDevices();
   await mockDevices();
   res.send("done");
 });
 
-app.get("/resetDeviceUpdate", async function(req, res) {
+app.get("/device/resetUpdates", async function(req, res) {
   console.log("Resetting device updates");
   await deleteAllDeviceUpdates();
   await mockDeviceUpdates();
   res.send("done");
+});
+
+app.get("/allDevices", async function(req, res) {
+  const data = await getAllDevices();
+  res.send(JSON.stringify(data));
 });
 
 app.get("/setDeviceState", async function(req, res) {
@@ -73,17 +75,18 @@ app.get("/setDeviceState", async function(req, res) {
   console.log("set device state", deviceId, state);
   const device = await setDeviceState(deviceId, state == "true" ? true : false);
   const result = {
-    deviceName: device.name,
+    deviceId: +device.deviceId,
     state: state == "true" ? true : false
   };
   if (pythonSocket) pythonSocket.emit("deviceUpdate", result);
+  if (mainSocket) mainSocket.emit("deviceUpdate", result);
   res.send("done");
 });
 
 app.get("/setDeviceCords", async function(req, res) {
-  const { id, lat, lng } = req.query;
-  console.log("set device cords", id, lat, lng);
-  await setDeviceCords(id, lat, lng);
+  const { deviceId, lat, lng } = req.query;
+  console.log("set device cords", deviceId, lat, lng);
+  await setDeviceCords(deviceId, lat, lng);
   res.send("done");
 });
 
@@ -106,9 +109,11 @@ let pythonSocket: socketIO.Socket;
 
 io.on("connection", function(socket) {
   console.log("Connection");
-  socket.on("setAsMain", function(data) {
+  socket.on("setAsMain", async function(data) {
     console.log("Set as main");
     mainSocket = socket;
+    const devices = await getAllDevices();
+    socket.emit("allDevices", devices);
   });
 
   socket.on("setAsPython", function(data) {

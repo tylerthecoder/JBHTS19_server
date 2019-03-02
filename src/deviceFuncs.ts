@@ -2,13 +2,20 @@ import { Device, IDeviceModel } from "./models/device";
 import { DeviceUpdate } from "./models/device-log";
 import { getRate } from "./server";
 
-export async function setDeviceCords(id: string, lat: string, lng: string) {
-  const device = await Device.findByIdAndUpdate(id, {
-    $set: {
-      lat,
-      lng
+export async function setDeviceCords(
+  deviceId: string,
+  lat: string,
+  lng: string
+) {
+  const device = await Device.findOneAndUpdate(
+    { deviceId },
+    {
+      $set: {
+        lat,
+        lng
+      }
     }
-  });
+  );
   return device;
 }
 
@@ -67,6 +74,11 @@ export async function getDeviceMetrics(deviceId: string) {
     }
     lastState = update.isOn;
     lastTime = time;
+  }
+
+  // if device currently on then add its time
+  if (device.isOn) {
+    timeOn += new Date().getTime() - lastTime;
   }
 
   const wattSeconds = device.watts * (timeOn / 1000);

@@ -7,25 +7,16 @@ export interface IDeviceModel extends Document {
   lat: string;
   lng: string;
   watts: number;
-  timesChanged: number;
-  lastChanged: Date;
 }
 
 export var DeviceSchema: Schema = new Schema({
   name: String,
   deviceId: String,
   isOn: Boolean,
-  timesChanged: Number,
   lat: String,
   lng: String,
   watts: Number,
   lastChanged: Date
-});
-
-DeviceSchema.pre("save", function(next) {
-  const now = new Date();
-  (this as IDeviceModel).lastChanged = now;
-  next();
 });
 
 export const Device: Model<IDeviceModel> = model<IDeviceModel>(
