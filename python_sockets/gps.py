@@ -9,6 +9,7 @@ def getRate(lat, lon):
     apiKey = 'lZgLIACHh8UM8NQVROxPtUrbZWxoNaje3leasT70'
     r = requests.get('https://developer.nrel.gov/api/utility_rates/v3.json?lat='+lat+'&lon='+lon+'&api_key='+apiKey)
     response = r.json()
+    print(response['outputs']['commercial'])
     return response['outputs']['commercial']
 
 
@@ -24,7 +25,6 @@ def writeSerial(instruction):
     serl.write(instruction.encode())
 
 
-print(getRate('36.066124','-94.173745'))
 
 
 
