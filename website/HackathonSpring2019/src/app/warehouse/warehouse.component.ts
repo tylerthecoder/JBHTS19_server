@@ -12,7 +12,6 @@ declare const google: any;
   styleUrls: ['./warehouse.component.scss']
 })
 export class WarehouseComponent implements OnInit {
-
   @ViewChildren('devices') someDevices;
 
   private socket;
@@ -41,10 +40,9 @@ export class WarehouseComponent implements OnInit {
   constructor(private http: HttpClient) { }
 
   ngOnInit() {
-
     this.map = new google.maps.Map(document.getElementById('map'), {
       zoom: this.zoom,
-      center: {lat: this.lat, lng: this.lng},
+      center: { lat: this.lat, lng: this.lng },
       disableDefaultUI: true,
       mapTypeId: 'roadmap',
       scrollwheel: false,
@@ -59,11 +57,11 @@ export class WarehouseComponent implements OnInit {
 
     this.socket.emit('setAsMain');
 
-    this.socket.on('lat-lng', (coords) => {
+    this.socket.on('lat-lng', coords => {
       console.log(coords);
       const latCoord = parseFloat(coords.lat);
       const lngCoord = parseFloat(coords.lng);
-      this.map.setCenter({lat: latCoord, lng: lngCoord});
+      this.map.setCenter({ lat: latCoord, lng: lngCoord });
       this.map.setZoom(20);
 
       this.addAllCurrentAppliances(this.allDevices);
@@ -233,5 +231,4 @@ export class WarehouseComponent implements OnInit {
   public changeState(event, marker) {
     console.log(event, marker);
   }
-
 }
