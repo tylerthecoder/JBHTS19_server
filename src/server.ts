@@ -2,13 +2,25 @@ import express from "express";
 import socketIO from "socket.io";
 import http from "http";
 import path from "path";
+import mongoose from "mongoose";
 
 const app = express();
 const server = new http.Server(app);
 const io = socketIO(server);
 
+const db = mongoose.connect(
+  "mongodb+srv://Admin:admin@cluster0-xdf3u.mongodb.net/test?retryWrites=true",
+  () => {
+    console.log("Connected to database");
+  }
+);
+
 app.get("/", function(req, res) {
   res.sendFile(path.resolve(__dirname, "../public/index.html"));
+});
+
+app.get("/canvas", function(req, res) {
+  res.sendFile(path.resolve(__dirname, "../public/draw.html"));
 });
 
 io.on("connection", function(socket) {
