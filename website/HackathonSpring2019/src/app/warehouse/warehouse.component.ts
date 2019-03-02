@@ -22,9 +22,9 @@ export class WarehouseComponent implements OnInit, OnDestroy {
 
   private allDevices: Device[] = [];
 
-  lat = 29.617873;
-  lng = -98.007553;
-  zoom = 2;
+  lat = 38.383008;
+  lng = -98.022284;
+  zoom = 4;
   url = 'http://ec2-18-232-100-162.compute-1.amazonaws.com:3000/';
 
   constructor(private http: HttpClient) {}
@@ -107,6 +107,14 @@ export class WarehouseComponent implements OnInit, OnDestroy {
         onState: this.currentAppliance.isOn
       });
 
+      if (marker.onState === true) {
+        marker.setIcon(
+          'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png'
+        );
+      } else {
+        marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
+      }
+
       this.markers.push(marker);
 
       this.currentAppliance.lat = location.lat();
@@ -116,6 +124,7 @@ export class WarehouseComponent implements OnInit, OnDestroy {
         parseFloat(location.lat),
         parseFloat(location.lng)
       );
+
       marker = new google.maps.Marker({
         position: markerLocation,
         map: this.map,
@@ -123,6 +132,14 @@ export class WarehouseComponent implements OnInit, OnDestroy {
         deviceId: this.currentAppliance.deviceId,
         onState: this.currentAppliance.isOn
       });
+
+      if (marker.onState === true) {
+        marker.setIcon(
+          'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png'
+        );
+      } else {
+        marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
+      }
 
       this.markers.push(marker);
     }
@@ -163,6 +180,15 @@ export class WarehouseComponent implements OnInit, OnDestroy {
               marker.deviceId
             }&state=${value}`
           );
+          if (value === true) {
+            marker.setIcon(
+              'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png'
+            );
+          } else {
+            marker.setIcon(
+              'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+            );
+          }
         };
       });
 
