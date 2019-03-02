@@ -44,9 +44,7 @@ app.get("/setLatLng", async function(req, res) {
   console.log("Set cord", lat, lng, rate);
   if (mainSocket) {
     io.to("main").emit("lat-lng", { lat, lng });
-    //mainSocket.emit("lat-lng", { lat, lng });
     const devices = await getAllDevices();
-    // mainSocket.emit("allDevices", devices);
     io.to("main").emit("allDevices", devices);
   }
   res.send(`${lat} ${lng}`);
@@ -94,7 +92,6 @@ app.get("/device/new", async function(req, res) {
   console.log("Creating new device");
   await createDevice();
   const devices = await getAllDevices();
-  // mainSocket.emit("allDevices", devices);
   io.to("main").emit("allDevices", devices);
   res.send("end");
 });
@@ -108,7 +105,6 @@ app.get("/device/setState", async function(req, res) {
     state: state == "true" ? 1 : 0
   };
   if (pythonSocket) pythonSocket.emit("deviceUpdate", result);
-  // if (mainSocket) mainSocket.emit("deviceUpdate", result);
   io.to("main").emit("deviceUpdate", result);
   res.send("done");
 });

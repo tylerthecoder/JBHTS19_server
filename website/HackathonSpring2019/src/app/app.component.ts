@@ -15,17 +15,23 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     setInterval(() => {
-      fetch(`${this.url}device/allMetrics`).
-            then(x => x.json()).
-            then(metrics => {
-              const timeOn = (metrics.timeOn / 1000.0).toFixed(2);
-              const kwHours = (metrics.kwHours).toFixed(2);
-              const cost = (metrics.cost).toFixed(2);
+      fetch(`${this.url}device/allMetrics`)
+        .then(x => x.json())
+        .then(metrics => {
+          const timeOn = (metrics.timeOn / 1000.0).toFixed(2);
+          const kwHours = metrics.kwHours.toFixed(2);
+          const cost = metrics.cost.toFixed(2);
 
-              (document.getElementById('total-timeOn') as HTMLDivElement).innerHTML = timeOn;
-              (document.getElementById('total-kwHours') as HTMLDivElement).innerHTML = kwHours;
-              (document.getElementById('total-costs') as HTMLDivElement).innerHTML = cost;
-            });
-    }, 1000);
+          (document.getElementById(
+            'total-timeOn'
+          ) as HTMLDivElement).innerHTML = timeOn;
+          (document.getElementById(
+            'total-kwHours'
+          ) as HTMLDivElement).innerHTML = kwHours;
+          (document.getElementById(
+            'total-costs'
+          ) as HTMLDivElement).innerHTML = cost;
+        });
+    }, 5000);
   }
 }
