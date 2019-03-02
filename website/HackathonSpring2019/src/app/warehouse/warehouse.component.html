@@ -5,7 +5,7 @@
   <div class="right">
     <div class="appliancesHead">Appliances</div>
     <div class="appliances">
-      <div class="appliance-item" *ngFor="let appliance of appliances">{{ appliance.name }}</div>
+      <div class="appliance-item" *ngFor="let appliance of allDevices" id="{{appliance.deviceId}}" (click)="setCurrentAppliance(appliance)">{{ appliance.name }}</div>
     </div>
   </div>
 </div>
