@@ -18,7 +18,6 @@ export class AppComponent implements OnInit {
       fetch(`${this.url}device/allMetrics`).
             then(x => x.json()).
             then(metrics => {
-              console.log({ metrics });
               const timeOn = (metrics.timeOn / 1000.0).toFixed(2);
               const kwHours = (metrics.kwHours).toFixed(2);
               const cost = (metrics.cost).toFixed(2);
