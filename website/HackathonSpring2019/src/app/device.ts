@@ -5,4 +5,5 @@ export class Device {
     watts: number;
     lat?: number;
     lng?: number;
+    onMap?: boolean;
 }

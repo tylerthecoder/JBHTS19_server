@@ -13,7 +13,7 @@
 .right {
     grid-column: span 2;
     height: 100%;
-    border-left: 2px dashed black;
+    border-left: 0.1vw dashed black;
     background-color: #F0f0f0;
 }
 
@@ -21,8 +21,8 @@
     font-Size: 2vw;
     text-align: center;
     background-color: rgba(46, 204, 113, 1);
-    border-left: 2px solid rgba(77, 175, 124, 1);
-    border-bottom: 4px solid rgba(77, 175, 124, 1);
+    border-left: 0.1vw solid rgba(77, 175, 124, 1);
+    border-bottom: 0.2vw solid rgba(77, 175, 124, 1);
 }
 
 .appliances {
@@ -34,14 +34,18 @@
 
 .appliance-item {
     margin: auto;
-    border: 3px solid black;
-    padding: 10px;
-    width: 100px;
+    border: 0.15vw solid black;
+    padding: 0.5vw;
+    width: 5vw;
     text-align: center;
-    border-radius: 5px;
+    border-radius: 0.25vw;
     color: white;
     background-color: #5DCCED;
-    font-size: 15px;
+    font-size: 0.75vw;
     font-family: Helvetica,Arial,Sans-Serif
+}
+
+.grey {
+    background-color: #C0C0C0;
 }
 

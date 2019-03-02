@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChildren } from '@angular/core';
+import { Component, OnInit, ViewChildren, OnDestroy } from '@angular/core';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import * as io from 'socket.io-client';
 import { Device } from '../device';
@@ -11,7 +11,7 @@ declare const google: any;
   templateUrl: './warehouse.component.html',
   styleUrls: ['./warehouse.component.scss']
 })
-export class WarehouseComponent implements OnInit {
+export class WarehouseComponent implements OnInit, OnDestroy {
   @ViewChildren('devices') someDevices;
 
   private socket;
@@ -67,13 +67,12 @@ export class WarehouseComponent implements OnInit {
       const lngCoord = parseFloat(coords.lng);
       this.map.setCenter({ lat: latCoord, lng: lngCoord });
       this.map.setZoom(20);
-
-      this.addAllCurrentAppliances(this.allDevices);
     });
 
     this.socket.on('allDevices', (devices) => {
       this.allDevices = [];
       this.allDevices = devices;
+      this.addAllCurrentAppliances(this.allDevices);
       console.log(this.allDevices);
     });
 
@@ -94,12 +93,27 @@ export class WarehouseComponent implements OnInit {
     });
   }
 
+  ngOnDestroy() {
+    this.markers = [];
+    this.allDevices = [];
+  }
+
   public setCurrentAppliance(appliance) {
     this.currentAppliance = appliance;
   }
 
   public addAppliance(location) {
+    for (const device of this.allDevices) {
+      console.log(typeof device.deviceId, typeof this.currentAppliance.deviceId);
+      console.log(+device.deviceId === +this.currentAppliance.deviceId);
+      console.log(device.deviceId, this.currentAppliance.deviceId);
+      if (+device.deviceId === +this.currentAppliance.deviceId) {
+        device.onMap = true;
+      }
+    }
+    console.log(this.allDevices);
     console.log(location);
+    console.log(this.currentAppliance);
     if (!this.firstLoad) {
       if (!this.currentAppliance.lat) {
         const marker = new google.maps.Marker({
@@ -110,15 +124,10 @@ export class WarehouseComponent implements OnInit {
             onState: this.currentAppliance.isOn,
         });
 
-        if (marker.isOn === true) {
-          marker.setIcon('http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FFFF33');
-        } else {
-          marker.setIcon('http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FE7569');
-        }
+        console.log(marker);
 
         this.markers.push(marker);
 
-        console.log(this.currentAppliance);
         this.currentAppliance.lat = location.lat();
         this.currentAppliance.lng = location.lng();
 
@@ -162,10 +171,8 @@ export class WarehouseComponent implements OnInit {
                 };
               });
         });
-        this.changeBackground();
       }
     } else {
-
 
       if (this.currentAppliance.lat) {
         const markerLocation = new google.maps.LatLng(parseFloat(location.lat), parseFloat(location.lng));
@@ -175,22 +182,11 @@ export class WarehouseComponent implements OnInit {
             title: this.currentAppliance.name,
             deviceId: this.currentAppliance.deviceId,
             onState: this.currentAppliance.isOn,
-            icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FFFF33'
         });
 
-        if (marker.isOn === true) {
-          marker.setIcon('http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FFFF33');
-        } else {
-          marker.setIcon('http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FE7569');
-        }
+        console.log(marker);
 
         this.markers.push(marker);
-
-        console.log(this.currentAppliance);
-
-        fetch(`${this.url}device/setCoords?deviceId=${this.currentAppliance.deviceId}` +
-                                                    `&lat=${this.currentAppliance.lat}` +
-                                                    `&lng=${this.currentAppliance.lng}`);
 
         marker.addListener('click', () => {
           const infoWindow = new google.maps.InfoWindow({
@@ -225,24 +221,19 @@ export class WarehouseComponent implements OnInit {
                 };
               });
         });
-
-        this.changeBackground();
       }
     }
   }
 
   public addAllCurrentAppliances(devices) {
     for (const device of devices) {
+      console.log(device);
       if (device.lat && device.lng) {
         this.currentAppliance = device;
         this.addAppliance({lat: this.currentAppliance.lat, lng: this.currentAppliance.lng});
       }
     }
     this.firstLoad = false;
-  }
-
-  public changeBackground() {
-    document.getElementById(`${this.currentAppliance.deviceId}`).style.backgroundColor = '#C0C0C0';
   }
 
   public changeState(event, marker) {

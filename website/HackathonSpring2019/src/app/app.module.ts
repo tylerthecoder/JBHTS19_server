@@ -17,7 +17,6 @@ import { OfficeComponent } from './office/office.component';
   imports: [
     BrowserModule,
     HttpClientModule,
-    RouterModule.forRoot(appRoutes),
   ],
   providers: [],
   bootstrap: [AppComponent]
