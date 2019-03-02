@@ -7,18 +7,18 @@
     }, {
       "name": "Turing",
       "deviceId": "1",
-      "isOn": true,
+      "isOn": false,
       "watts": 8000
     }, {
       "name": "HVAC",
       "deviceId": "2",
-      "isOn": true,
+      "isOn": false,
       "watts": 500
     },
     {
       "name": "Computer Lab",
       "deviceId": "3",
-      "isOn": true,
+      "isOn": false,
       "watts": 1000
     },
     {

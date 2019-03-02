@@ -21,4 +21,4 @@ import { OfficeComponent } from './office/office.component';
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

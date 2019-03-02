@@ -38,12 +38,14 @@ app.get("/admin", function(req, res) {
 
 let theRate: number;
 
-app.get("/setLatLng", function(req, res) {
+app.get("/setLatLng", async function(req, res) {
   const { lat, lng, rate } = req.query;
-  theRate = parseFloat(rate);
+  if (rate) theRate = parseFloat(rate);
   console.log("Set cord", lat, lng, rate);
   if (mainSocket) {
     mainSocket.emit("lat-lng", { lat, lng });
+    const devices = await getAllDevices();
+    mainSocket.emit("allDevices", devices);
   }
   res.send(`${lat} ${lng}`);
 });
@@ -129,7 +131,6 @@ app.get("/device/metrics", async function(req, res) {
 });
 
 app.get("/device/allMetrics", async function(req, res) {
-  console.log("All Device Metrics");
   const metrics = await getAllMetrics();
   res.send(JSON.stringify(metrics));
 });
@@ -142,15 +143,13 @@ io.on("connection", function(socket) {
   socket.on("setAsMain", async function(data) {
     console.log("Set as main");
     mainSocket = socket;
-    const devices = await getAllDevices();
-    socket.emit("allDevices", devices);
   });
 
   socket.on("setCoords", async function(data) {
     console.log(data);
   });
 
-  socket.on("setAsPython", function(data) {
+  socket.on("setAsPython", async function(data) {
     console.log("Set as python");
     pythonSocket = socket;
   });
