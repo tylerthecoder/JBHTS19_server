@@ -37,9 +37,16 @@ app.get("/admin", function(req, res) {
 });
 
 let theRate: number;
+let zoomed: boolean;
+let lat1: string;
+let lng1: string;
 
 app.get("/setLatLng", async function(req, res) {
   const { lat, lng, rate } = req.query;
+  zoomed = true;
+  lat1 = lat;
+  lng1 = lng;
+
   if (rate) theRate = parseFloat(rate);
   console.log("Set cord", lat, lng, rate);
   if (mainSocket) {
@@ -69,6 +76,7 @@ app.use(function(req, res, next) {
 
 // device routes
 app.get("/device/reset", async function(req, res) {
+  zoomed = false;
   console.log("Resetting devices");
   await deleteAllDevices();
   await mockDevices();
@@ -147,6 +155,9 @@ io.on("connection", function(socket) {
     console.log("Set as main");
     socket.join("main");
     mainSocket = socket;
+    if (zoomed) {
+      io.to("main").emit("lat-lng", { lat: lat1, lng: lng1 });
+    }
   });
 
   socket.on("setCoords", async function(data) {
