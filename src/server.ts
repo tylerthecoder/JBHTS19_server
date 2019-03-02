@@ -29,6 +29,7 @@ app.get("/setLatLong", function(req, res) {
   if (mainSocket) {
     mainSocket.emit("lat-lng", { lat, lng });
   }
+  res.send(`${lat} ${lng}`);
 });
 
 let mainSocket: socketIO.Socket;
