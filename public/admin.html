@@ -1,0 +1,19 @@
+<script>
+  async function resetDevices() {
+    const url = `http://${location.host}/device/reset`;
+    const rawData = await fetch(url);
+    const data = await rawData.text();
+    console.log(data);
+  }
+
+  async function allMetrics() {
+    const url = `http://${location.host}/device/allMetrics`;
+    const rawData = await fetch(url);
+    const data = await rawData.text();
+    console.log(data);
+  }
+</script>
+
+<button onclick="resetDevices()"> Reset Devices </button>
+
+<button onclick="allMetrics()"> Get All Metrics </button>
