@@ -1,3 +1,11 @@
-<p>
-  warehouse works!
-</p>
+<div class="wrapper">
+  <div id="map">
+
+  </div>
+  <div class="right">
+    <div class="appliancesHead">Appliances</div>
+    <div class="appliances">
+      <div class="appliance-item" *ngFor="let appliance of appliances">{{ appliance.name }}</div>
+    </div>
+  </div>
+</div>

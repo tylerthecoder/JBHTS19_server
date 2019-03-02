@@ -30,12 +30,13 @@ nav {
     grid-column: span 4;
     grid-row: span 50;
     border: 2px solid rgba(77, 175, 124, 1);
-    background-color: rgba(46, 204, 113, 1);
+    background-color: #F0f0f0;
 }
 
 .facilitiesHead {
     font-Size: 2vw;
     text-align: center;
+    background-color: rgba(46, 204, 113, 1);
     border-bottom: 4px solid rgba(77, 175, 124, 1);
 }
 
@@ -59,42 +60,9 @@ nav {
 }
 
 .main {
-    grid-column: span 22;
-    grid-row: span 50;
-    width: 100%;
-    border: 2px solid rgba(77, 175, 124, 1);
-}
-
-.right {
-    grid-column: span 4;
+    grid-column: span 26;
     grid-row: span 50;
     border: 2px solid rgba(77, 175, 124, 1);
-    background-color: rgba(46, 204, 113, 1);
-}
-
-.appliancesHead {
-    font-Size: 2vw;
-    text-align: center;
-    border-bottom: 4px solid rgba(77, 175, 124, 1);
-}
-
-.appliances {
-    display: flex;
-    flex-direction: column;
-    height: 90%;
-}
-
-.appliance-item {
-    margin: auto;
-    border: 3px solid black;
-    padding: 10px;
-    width: 100px;
-    text-align: center;
-    border-radius: 5px;
-    color: white;
-    background-color: #5DCCED;
-    font-size: 20px;
-    font-family: Helvetica,Arial,Sans-Serif
 }
 
 .footer {
