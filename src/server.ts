@@ -9,7 +9,9 @@ import {
   setDeviceState,
   setDeviceCords,
   mockDeviceUpdates,
-  getDeviceUpdates
+  getDeviceUpdates,
+  getDeviceMetrics,
+  deleteAllDeviceUpdates
 } from "./deviceFuncs";
 
 const app = express();
@@ -32,38 +34,49 @@ app.get("/canvas", function(req, res) {
   res.sendFile(path.resolve(__dirname, "../public/draw.html"));
 });
 
+let theRate: number;
 app.get("/setLatLng", function(req, res) {
-  const { lat, lng } = req.query;
-  console.log(lat, lng);
+  const { lat, lng, rate } = req.query;
+  theRate = parseFloat(rate);
+  console.log("Set cord", lat, lng, rate);
   if (mainSocket) {
     mainSocket.emit("lat-lng", { lat, lng });
   }
   res.send(`${lat} ${lng}`);
 });
 
+export function getRate() {
+  if (theRate) {
+    return theRate;
+  } else {
+    return 0.1;
+  }
+}
+
 // device routes
-app.get("/setMocks", async function(req, res) {
-  console.log("Setting mocks");
+app.get("/resetDevices", async function(req, res) {
+  console.log("Resetting devices");
+  await deleteAllDevices();
   await mockDevices();
   res.send("done");
 });
 
-app.get("/setMockUpdate", async function(req, res) {
-  console.log("Setting mocks updates");
+app.get("/resetDeviceUpdate", async function(req, res) {
+  console.log("Resetting device updates");
+  await deleteAllDeviceUpdates();
   await mockDeviceUpdates();
-  res.send("done");
-});
-
-app.get("/deleteDevices", async function(req, res) {
-  console.log("Deleting devices");
-  await deleteAllDevices();
   res.send("done");
 });
 
 app.get("/setDeviceState", async function(req, res) {
   const { id, state } = req.query;
   console.log("set device state", id, state);
-  await setDeviceState(id, state == "true" ? true : false);
+  const device = await setDeviceState(id, state == "true" ? true : false);
+  const result = {
+    deviceName: device.name,
+    state: state == "true" ? true : false
+  };
+  pythonSocket.emit("deviceUpdate", result);
   res.send("done");
 });
 
@@ -81,14 +94,26 @@ app.get("/deviceUpdates", async function(req, res) {
   res.send(updates);
 });
 
+app.get("/deviceMetrics", async function(req, res) {
+  const { deviceId } = req.query;
+  console.log("Device Metrics", deviceId);
+  const metrics = await getDeviceMetrics(deviceId);
+  res.send(JSON.stringify(metrics));
+});
+
 let mainSocket: socketIO.Socket;
+let pythonSocket: socketIO.Socket;
 
 io.on("connection", function(socket) {
   console.log("Connection");
-  socket.emit("news", { hello: "world" });
   socket.on("setAsMain", function(data) {
     console.log("Set as main");
     mainSocket = socket;
+  });
+
+  socket.on("setAsPython", function(data) {
+    console.log("Set as python");
+    pythonSocket = socket;
   });
 });
 

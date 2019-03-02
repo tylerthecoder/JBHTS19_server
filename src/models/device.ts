@@ -6,7 +6,7 @@ export interface IDeviceModel extends Document {
   isOn: boolean;
   lat: string;
   lng: string;
-  energyPerHour: number;
+  watts: number;
   timesChanged: number;
   lastChanged: Date;
 }
@@ -18,7 +18,7 @@ export var DeviceSchema: Schema = new Schema({
   timesChanged: Number,
   lat: String,
   lng: String,
-  energyPerHour: Number,
+  watts: Number,
   lastChanged: Date
 });
 
