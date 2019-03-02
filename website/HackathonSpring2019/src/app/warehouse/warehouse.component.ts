@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChildren, OnDestroy } from '@angular/core';
 import * as io from 'socket.io-client';
 import { Device } from '../device';
-import { HttpClient } from '@angular/common/http';
 
 declare const google: any;
 
@@ -13,6 +12,7 @@ declare const google: any;
 export class WarehouseComponent implements OnInit, OnDestroy {
   @ViewChildren('devices') someDevices;
 
+  public infoWindow = new google.maps.InfoWindow();
   private socket;
   private map;
 
@@ -22,12 +22,14 @@ export class WarehouseComponent implements OnInit, OnDestroy {
 
   private allDevices: Device[] = [];
 
+  private selectedMarker;
+
   lat = 38.383008;
   lng = -98.022284;
   zoom = 4;
   url = 'http://ec2-18-232-100-162.compute-1.amazonaws.com:3000/';
 
-  constructor(private http: HttpClient) {}
+  constructor() {}
 
   ngOnInit() {
     this.map = new google.maps.Map(document.getElementById('map'), {
@@ -75,8 +77,44 @@ export class WarehouseComponent implements OnInit, OnDestroy {
           (document.getElementById(
             `${marker.deviceId}applianceState`
           ) as HTMLInputElement).checked = marker.onState;
+          if (marker.onState) {
+            marker.setIcon(
+              'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png'
+            );
+          } else {
+            marker.setIcon(
+              'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+            );
+          }
         }
       }
+    });
+
+    google.maps.event.addListener(this.infoWindow, 'domready', () => {
+      const marker = this.selectedMarker;
+      const markerId = `${marker.deviceId}applianceState`;
+
+      const markerElement = document.getElementById(
+        markerId
+      ) as HTMLInputElement;
+      markerElement.checked = marker.onState;
+      markerElement.onclick = event => {
+        const value = (event.srcElement as HTMLInputElement).checked;
+        fetch(
+          `${this.url}device/setState?deviceId=${
+            marker.deviceId
+          }&state=${value}`
+        );
+        if (value) {
+          marker.setIcon(
+            'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png'
+          );
+        } else {
+          marker.setIcon(
+            'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+          );
+        }
+      };
     });
   }
 
@@ -107,14 +145,6 @@ export class WarehouseComponent implements OnInit, OnDestroy {
         onState: this.currentAppliance.isOn
       });
 
-      if (marker.onState === true) {
-        marker.setIcon(
-          'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png'
-        );
-      } else {
-        marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
-      }
-
       this.markers.push(marker);
 
       this.currentAppliance.lat = location.lat();
@@ -133,15 +163,13 @@ export class WarehouseComponent implements OnInit, OnDestroy {
         onState: this.currentAppliance.isOn
       });
 
-      if (marker.onState === true) {
-        marker.setIcon(
-          'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png'
-        );
-      } else {
-        marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
-      }
-
       this.markers.push(marker);
+    }
+
+    if (marker.onState) {
+      marker.setIcon('http://maps.google.com/mapfiles/ms/icons/yellow-dot.png');
+    } else {
+      marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
     }
 
     if (wasClick) {
@@ -153,44 +181,20 @@ export class WarehouseComponent implements OnInit, OnDestroy {
     }
 
     marker.addListener('click', () => {
+      this.selectedMarker = marker;
       const markerId = `${marker.deviceId}applianceState`;
+      this.infoWindow.setContent(`
+        <div>
+            <h3 style="text-align: center;">${marker.title}</h3>
+            <p> Loading metrics... </p>
+            <input type="checkbox"
+              id="${markerId}"
+              name="applianceState"
+              ${marker.onState ? 'checked' : ''}
+            >On
+        </div>`);
 
-      const infoWindow = new google.maps.InfoWindow({
-        content: `<div>
-                      <h3 style="text-align: center;">${marker.title}</h3>
-                      <p> Loading metrics... </p>
-                      <input type="checkbox"
-                        id="${markerId}"
-                        name="applianceState"
-                      >On
-                  </div>`
-      });
-
-      infoWindow.open(this.map, marker);
-
-      google.maps.event.addListener(infoWindow, 'domready', () => {
-        const markerElement = document.getElementById(
-          markerId
-        ) as HTMLInputElement;
-        markerElement.checked = marker.onState;
-        markerElement.onclick = event => {
-          const value = (event.srcElement as HTMLInputElement).checked;
-          fetch(
-            `${this.url}device/setState?deviceId=${
-              marker.deviceId
-            }&state=${value}`
-          );
-          if (value === true) {
-            marker.setIcon(
-              'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png'
-            );
-          } else {
-            marker.setIcon(
-              'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
-            );
-          }
-        };
-      });
+      this.infoWindow.open(this.map, marker);
 
       console.log('Getting Metrics');
       fetch(`${this.url}device/metrics?deviceId=${marker.deviceId}`)
@@ -200,7 +204,7 @@ export class WarehouseComponent implements OnInit, OnDestroy {
           const timeOn = (metrics.timeOn / 1000.0).toFixed(2);
           const kwHours = metrics.kwHours.toFixed(2);
           const cost = metrics.cost.toFixed(2);
-          infoWindow.setContent(`
+          this.infoWindow.setContent(`
             <div>
               <h3 style="text-align: center;">${marker.title}</h3>
               <div>Time On: ${timeOn} seconds</div>
@@ -210,18 +214,12 @@ export class WarehouseComponent implements OnInit, OnDestroy {
                 type="checkbox"
                 id="${markerId}"
                 name="applianceState"
-                checked=${marker.onState}
+                ${marker.onState ? 'checked' : ''}
               >
               On
             </div>
           `);
         });
-      google.maps.event.addListener(infoWindow, 'domready', () => {
-        const markerElement = document.getElementById(
-          markerId
-        ) as HTMLInputElement;
-        markerElement.checked = marker.onState;
-      });
     });
   }
 
