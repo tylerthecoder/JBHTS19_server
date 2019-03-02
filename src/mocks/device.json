@@ -1,0 +1,37 @@
+{
+  "devices": [{
+      "name": "light",
+      "deviceId": "0",
+      "isOn": false,
+      "watts": 100
+    }, {
+      "name": "turing",
+      "deviceId": "1",
+      "isOn": true,
+      "watts": 9000
+    }, {
+      "name": "HVAC",
+      "deviceId": "2",
+      "isOn": true,
+      "watts": 500
+    },
+    {
+      "name": "computer lab",
+      "deviceId": "3",
+      "isOn": true,
+      "watts": 1000
+    },
+    {
+      "name": "printer",
+      "deviceId": "4",
+      "isOn": false,
+      "watts": 50
+    },
+    {
+      "name": "projector",
+      "deviceId": "5",
+      "isOn": false,
+      "watts": 50
+    }
+  ]
+}
