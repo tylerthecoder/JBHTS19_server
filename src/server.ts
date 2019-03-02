@@ -113,6 +113,8 @@ app.get("/device/setCoords", async function(req, res) {
   const { deviceId, lat, lng } = req.query;
   console.log("set device cords", deviceId, lat, lng);
   await setDeviceCords(deviceId, lat, lng);
+  const devices = await getAllDevices();
+  mainSocket.emit("allDevices", devices);
   res.send("done");
 });
 
