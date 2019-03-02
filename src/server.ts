@@ -10,6 +10,7 @@ const io = socketIO(server);
 
 const db = mongoose.connect(
   "mongodb+srv://Admin:admin@cluster0-xdf3u.mongodb.net/test?retryWrites=true",
+  { useNewUrlParser: true },
   () => {
     console.log("Connected to database");
   }
