@@ -35,9 +35,9 @@ export class WarehouseComponent implements OnInit, OnDestroy {
 
   private allDevices: Device[] = [];
 
-  lat = 29.617873;
-  lng = -98.007553;
-  zoom = 2;
+  lat = 38.383008;
+  lng = -98.022284;
+  zoom = 4;
   url = 'http://ec2-18-232-100-162.compute-1.amazonaws.com:3000/';
 
   constructor(private http: HttpClient) { }
@@ -104,7 +104,6 @@ export class WarehouseComponent implements OnInit, OnDestroy {
         device.onMap = true;
       }
     }
-    // if (!this.firstLoad) {
       let marker;
 
       if (!this.currentAppliance.lat) {
@@ -115,6 +114,12 @@ export class WarehouseComponent implements OnInit, OnDestroy {
             deviceId: this.currentAppliance.deviceId,
             onState: this.currentAppliance.isOn,
         });
+
+        if (marker.onState === true) {
+          marker.setIcon('http://maps.google.com/mapfiles/ms/icons/yellow-dot.png');
+        } else {
+          marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
+        }
 
         this.markers.push(marker);
 
@@ -129,6 +134,12 @@ export class WarehouseComponent implements OnInit, OnDestroy {
             deviceId: this.currentAppliance.deviceId,
             onState: this.currentAppliance.isOn,
         });
+
+        if (marker.onState === true) {
+          marker.setIcon('http://maps.google.com/mapfiles/ms/icons/yellow-dot.png');
+        } else {
+          marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
+        }
 
         this.markers.push(marker);
       }
@@ -167,62 +178,17 @@ export class WarehouseComponent implements OnInit, OnDestroy {
                 (document.getElementById(`${marker.deviceId}applianceState`) as HTMLInputElement).checked = marker.onState;
                 document.getElementById(`${marker.deviceId}applianceState`).onclick = (event) => {
                   const value = (event.srcElement as HTMLInputElement).checked === true ? true : false;
+
+                  if (value === true) {
+                    marker.setIcon('http://maps.google.com/mapfiles/ms/icons/yellow-dot.png');
+                  } else {
+                    marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
+                  }
+
                   fetch(`${this.url}device/setState?deviceId=${marker.deviceId}&state=${value}`);
                 };
               });
         });
-
-    // else {
-
-    //   if (this.currentAppliance.lat) {
-    //     const markerLocation = new google.maps.LatLng(parseFloat(location.lat), parseFloat(location.lng));
-    //     const marker = new google.maps.Marker({
-    //         position: markerLocation,
-    //         map: this.map,
-    //         title: this.currentAppliance.name,
-    //         deviceId: this.currentAppliance.deviceId,
-    //         onState: this.currentAppliance.isOn,
-    //     });
-
-    //     console.log(marker);
-
-    //     this.markers.push(marker);
-
-    //     marker.addListener('click', () => {
-    //       const infoWindow = new google.maps.InfoWindow({
-    //         content: `<div>
-    //                       <h3 style="text-align: center;">${marker.title}</h3>
-    //                       <input type="checkbox" id="${marker.deviceId}applianceState" name="applianceState"
-    //                         onclick="this.changeState(this, ${marker.deviceId})">On
-    //                 </div>`
-    //       });
-    //       infoWindow.open(this.map, marker);
-    //       fetch(`${this.url}device/metrics?deviceId=${marker.deviceId}`).
-    //           then(x => x.json()).
-    //           then(metrics => {
-    //             console.log({ metrics });
-    //             const timeOn = (metrics.timeOn / 1000.0).toFixed(2);
-    //             const kwHours = (metrics.kwHours).toFixed(2);
-    //             const cost = (metrics.cost).toFixed(2);
-    //             infoWindow.setContent(`
-    //               <div>
-    //                     <h3 style="text-align: center;">${marker.title}</h3>
-    //                     <div>Time On: ${timeOn} seconds</div>
-    //                     <div>Kilowatt/hrs: ${kwHours} kilowatt hours</div>
-    //                     <div>Cost: ${cost} cents</div>
-    //                     <input type="checkbox" id="${marker.deviceId}applianceState" name="applianceState">On
-    //               </div>
-    //             `);
-    //             (document.getElementById(`${marker.deviceId}applianceState`) as HTMLInputElement).checked = marker.onState;
-    //             document.getElementById(`${marker.deviceId}applianceState`).onclick = (event) => {
-    //               console.log(event, marker.deviceId);
-    //               const value = (event.srcElement as HTMLInputElement).checked === true ? true : false;
-    //               fetch(`${this.url}device/setState?deviceId=${marker.deviceId}&state=${value}`);
-    //             };
-    //           });
-    //     });
-    //   }
-    //  }
   }
 
   public addAllCurrentAppliances(devices) {
