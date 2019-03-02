@@ -64,13 +64,10 @@ export async function getDeviceMetrics(deviceId: string) {
     return time1 - time2;
   });
 
-  console.log(updates);
-
   let timeOn = 0;
   let lastState = false;
   let lastTime = 0;
   for (const update of updates) {
-    console.log(update);
     const time = new Date(update.time).getTime();
     if (lastState) {
       timeOn += time - lastTime;
@@ -93,6 +90,22 @@ export async function getDeviceMetrics(deviceId: string) {
   const cost = kwHours * rate;
 
   return { timeOn, kwHours, cost };
+}
+
+export async function getAllMetrics() {
+  const devices = await getAllDevices();
+  const total = {
+    timeOn: 0,
+    kwHours: 0,
+    cost: 0
+  };
+  for (const device of devices) {
+    const metrics = await getDeviceMetrics(device.deviceId);
+    total.timeOn += metrics.timeOn;
+    total.kwHours += metrics.kwHours;
+    total.cost += metrics.cost;
+  }
+  return total;
 }
 
 export async function deleteAllDevices() {

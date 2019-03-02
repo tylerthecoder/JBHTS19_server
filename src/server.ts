@@ -10,7 +10,8 @@ import {
   getDeviceUpdates,
   getDeviceMetrics,
   deleteAllDeviceUpdates,
-  getAllDevices
+  getAllDevices,
+  getAllMetrics
 } from "./deviceFuncs";
 import { mockDeviceUpdates, mockDevices } from "./deviceMocks";
 
@@ -90,7 +91,7 @@ app.get("/device/setState", async function(req, res) {
   const device = await setDeviceState(deviceId, state == "true" ? true : false);
   const result = {
     deviceId: +device.deviceId,
-    state: state == "true" ? true : false
+    state: state == "true" ? 1 : 0
   };
   if (pythonSocket) pythonSocket.emit("deviceUpdate", result);
   if (mainSocket) mainSocket.emit("deviceUpdate", result);
@@ -115,6 +116,12 @@ app.get("/device/metrics", async function(req, res) {
   const { deviceId } = req.query;
   console.log("Device Metrics", deviceId);
   const metrics = await getDeviceMetrics(deviceId);
+  res.send(JSON.stringify(metrics));
+});
+
+app.get("/device/allMetrics", async function(req, res) {
+  console.log("All Device Metrics");
+  const metrics = await getAllMetrics();
   res.send(JSON.stringify(metrics));
 });
 
