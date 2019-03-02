@@ -3,7 +3,7 @@ exports.__esModule = true;
 var fs_1 = require("fs");
 function genRandomUpdates(deviceId) {
     var updates = [];
-    var min = Date.now();
+    var min = new Date('February 24, 2019 00:20:18 GMT-07:00').getTime();
     for (var i = 0; i < 10; i++) {
         var max = min + Math.floor(Math.random() * 1000000);
         updates.push({
@@ -16,7 +16,7 @@ function genRandomUpdates(deviceId) {
             isOn: false,
             time: max
         });
-        min = max;
+        min = max + Math.floor(Math.random() * 1000000);
     }
     return updates;
 }

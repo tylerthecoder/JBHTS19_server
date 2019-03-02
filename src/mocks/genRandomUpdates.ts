@@ -3,7 +3,7 @@ import { writeFile } from 'fs';
 function genRandomUpdates(deviceId: string) {
     let updates = [];
 
-    let min: number = Date.now()
+    let min: number = new Date('February 24, 2019 00:20:18 GMT-07:00').getTime();
 
     for (let i = 0; i < 10; i++) {
         const max: number = min + Math.floor(Math.random() * 1000000);
@@ -19,7 +19,7 @@ function genRandomUpdates(deviceId: string) {
             time: max
         });
 
-        min = max;
+        min = max + Math.floor(Math.random() * 1000000);
     }
     return updates;
 }
