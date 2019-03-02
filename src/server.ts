@@ -25,7 +25,9 @@ app.get("/canvas", function(req, res) {
 });
 
 app.get("/setLatLong", function(req, res) {
-  const { lat, lng } = req.params;
+  const { lat, lng } = req.query;
+  console.log(lat, lng);
+  console.log(mainSocket);
   if (mainSocket) {
     mainSocket.emit("lat-lng", { lat, lng });
   }
