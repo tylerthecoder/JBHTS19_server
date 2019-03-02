@@ -27,6 +27,6 @@ def main():
 
 # coords = gps.readGPS()
 coords = ['36.066124','-94.173745']
-rate = gps.getRate(coords[0], coords[1])
-gps.sendGPS(coords[0], coords[1], rate)
+rate = gps.getRate('36.1', '-94.1')
+#gps.sendGPS('36.1', '-94.1', str(rate))
 main()
