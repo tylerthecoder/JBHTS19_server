@@ -3,6 +3,8 @@ import { Document, Schema, Model, model } from "mongoose";
 export interface IDeviceModel extends Document {
   name: string;
   state: string;
+  lat: string;
+  lng: string;
   timesChanged: number;
   lastChanged: Date;
 }
@@ -10,7 +12,10 @@ export interface IDeviceModel extends Document {
 export var DeviceSchema: Schema = new Schema({
   name: String,
   state: String,
-  timesChanged: Number
+  timesChanged: Number,
+  lat: String,
+  lng: String,
+  lastChanged: Date
 });
 
 DeviceSchema.pre("save", function(next) {

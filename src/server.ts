@@ -24,11 +24,21 @@ app.get("/canvas", function(req, res) {
   res.sendFile(path.resolve(__dirname, "../public/draw.html"));
 });
 
+app.get("/setLatLong", function(req, res) {
+  const { lat, lng } = req.params;
+  if (mainSocket) {
+    mainSocket.emit("lat-lng", { lat, lng });
+  }
+});
+
+let mainSocket: socketIO.Socket;
+
 io.on("connection", function(socket) {
   console.log("Connection");
   socket.emit("news", { hello: "world" });
-  socket.on("my other event", function(data) {
-    console.log(data);
+  socket.on("setAsMain", function(data) {
+    console.log("Set as main");
+    mainSocket = socket;
   });
 });
 
