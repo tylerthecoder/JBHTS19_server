@@ -17,7 +17,8 @@ def sendGPS(lat, lng, rate):
     print(req)
 
 def readGPS():
-    serl.read()
+    gps = serl.read()
+    return gps
 
 def writeSerial(instruction):
     serl.write(instruction.encode())
