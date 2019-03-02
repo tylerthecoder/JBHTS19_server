@@ -11,7 +11,8 @@ import {
   getDeviceMetrics,
   deleteAllDeviceUpdates,
   getAllDevices,
-  getAllMetrics
+  getAllMetrics,
+  createDevice
 } from "./deviceFuncs";
 import { mockDeviceUpdates, mockDevices } from "./deviceMocks";
 
@@ -37,12 +38,16 @@ app.get("/admin", function(req, res) {
 
 let theRate: number;
 
-app.get("/setLatLng", function(req, res) {
+app.get("/setLatLng", async function(req, res) {
   const { lat, lng, rate } = req.query;
-  theRate = parseFloat(rate);
+  if (rate) theRate = parseFloat(rate);
   console.log("Set cord", lat, lng, rate);
   if (mainSocket) {
-    mainSocket.emit("lat-lng", { lat, lng });
+    io.to("main").emit("lat-lng", { lat, lng });
+    //mainSocket.emit("lat-lng", { lat, lng });
+    const devices = await getAllDevices();
+    // mainSocket.emit("allDevices", devices);
+    io.to("main").emit("allDevices", devices);
   }
   res.send(`${lat} ${lng}`);
 });
@@ -85,6 +90,15 @@ app.get("/device/all", async function(req, res) {
   res.send(JSON.stringify(data));
 });
 
+app.get("/device/new", async function(req, res) {
+  console.log("Creating new device");
+  await createDevice();
+  const devices = await getAllDevices();
+  // mainSocket.emit("allDevices", devices);
+  io.to("main").emit("allDevices", devices);
+  res.send("end");
+});
+
 app.get("/device/setState", async function(req, res) {
   const { deviceId, state } = req.query;
   console.log("set device state", deviceId, state);
@@ -94,7 +108,8 @@ app.get("/device/setState", async function(req, res) {
     state: state == "true" ? 1 : 0
   };
   if (pythonSocket) pythonSocket.emit("deviceUpdate", result);
-  if (mainSocket) mainSocket.emit("deviceUpdate", result);
+  // if (mainSocket) mainSocket.emit("deviceUpdate", result);
+  io.to("main").emit("deviceUpdate", result);
   res.send("done");
 });
 
@@ -102,6 +117,9 @@ app.get("/device/setCoords", async function(req, res) {
   const { deviceId, lat, lng } = req.query;
   console.log("set device cords", deviceId, lat, lng);
   await setDeviceCords(deviceId, lat, lng);
+  const devices = await getAllDevices();
+  mainSocket.emit("allDevices", devices);
+  io.to("main").emit("allDevices", devices);
   res.send("done");
 });
 
@@ -120,7 +138,6 @@ app.get("/device/metrics", async function(req, res) {
 });
 
 app.get("/device/allMetrics", async function(req, res) {
-  console.log("All Device Metrics");
   const metrics = await getAllMetrics();
   res.send(JSON.stringify(metrics));
 });
@@ -132,16 +149,15 @@ io.on("connection", function(socket) {
   console.log("Connection");
   socket.on("setAsMain", async function(data) {
     console.log("Set as main");
+    socket.join("main");
     mainSocket = socket;
-    const devices = await getAllDevices();
-    socket.emit("allDevices", devices);
   });
 
   socket.on("setCoords", async function(data) {
     console.log(data);
   });
 
-  socket.on("setAsPython", function(data) {
+  socket.on("setAsPython", async function(data) {
     console.log("Set as python");
     pythonSocket = socket;
   });
