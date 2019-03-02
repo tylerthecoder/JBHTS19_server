@@ -154,9 +154,10 @@ io.on("connection", function(socket) {
   socket.on("setAsMain", async function(data) {
     console.log("Set as main");
     socket.join("main");
-    mainSocket = socket;
     if (zoomed) {
       io.to("main").emit("lat-lng", { lat: lat1, lng: lng1 });
+      const devices = await getAllDevices();
+      io.to("main").emit("allDevices", devices);
     }
   });
 
