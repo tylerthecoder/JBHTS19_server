@@ -15,6 +15,8 @@ def on_message(data):
     deviceState = data['state']
     readIn = (deviceId*2) + deviceState
     gps.writeSerial(str(readIn))
+    
+        
 
 
 @sio.on('disconnect')
@@ -27,8 +29,8 @@ def main():
     sio.wait()
 
 # coords = gps.readGPS()
-coords = ['36.066124','-94.173745']
-rate = gps.getRate('36.1', '-94.1')
-print(rate)
-gps.sendGPS('36.1', '-94.1', '0.10')
+# coords = ['36.066124','-94.173745']
+# rate = gps.getRate(coords[0], coords[1])
+# print(rate)
+# gps.sendGPS(coords[0], coords[1], str(rate))
 main()
