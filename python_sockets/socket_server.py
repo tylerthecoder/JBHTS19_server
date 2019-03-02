@@ -11,9 +11,10 @@ def on_connect():
 @sio.on('deviceUpdate')
 def on_message(data):
     print('message received with ', data)
-    deviceId = data['deviceId']*10
-    deviceState = data['deviceState']
-    gps.writeSerial(str(deviceId+deviceState))
+    deviceId = data['deviceId']
+    deviceState = data['state']
+    readIn = (deviceId*2) + deviceState
+    gps.writeSerial(str(readIn))
 
 
 @sio.on('disconnect')
@@ -28,5 +29,6 @@ def main():
 # coords = gps.readGPS()
 coords = ['36.066124','-94.173745']
 rate = gps.getRate('36.1', '-94.1')
-#gps.sendGPS('36.1', '-94.1', str(rate))
+print(rate)
+gps.sendGPS('36.1', '-94.1', '0.10')
 main()
