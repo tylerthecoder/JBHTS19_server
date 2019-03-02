@@ -11,7 +11,8 @@ import {
   getDeviceMetrics,
   deleteAllDeviceUpdates,
   getAllDevices,
-  getAllMetrics
+  getAllMetrics,
+  createDevice
 } from "./deviceFuncs";
 import { mockDeviceUpdates, mockDevices } from "./deviceMocks";
 
@@ -83,6 +84,14 @@ app.get("/device/all", async function(req, res) {
   console.log("Getting all devices");
   const data = await getAllDevices();
   res.send(JSON.stringify(data));
+});
+
+app.get("/device/new", async function(req, res) {
+  console.log("Creating new device");
+  await createDevice();
+  const devices = await getAllDevices();
+  mainSocket.emit("allDevices", devices);
+  res.send("end");
 });
 
 app.get("/device/setState", async function(req, res) {

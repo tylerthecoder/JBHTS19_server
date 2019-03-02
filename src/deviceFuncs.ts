@@ -37,6 +37,16 @@ export async function setDeviceState(deviceId: string, state: boolean) {
   return device;
 }
 
+export async function createDevice() {
+  const d = await Device.create({
+    name: "Lamp",
+    deviceId: "6",
+    isOn: false,
+    watts: 10
+  });
+  await d.save();
+}
+
 export function getAllDevices() {
   return Device.find({});
 }
