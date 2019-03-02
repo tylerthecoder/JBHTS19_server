@@ -1,0 +1,47 @@
+.wrapper {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+}
+
+#map {
+    grid-column: span 10;
+    height: 100%;
+}
+
+.right {
+    grid-column: span 2;
+    height: 100%;
+    border-left: 2px dashed black;
+    background-color: #F0f0f0;
+}
+
+.appliancesHead {
+    font-Size: 2vw;
+    text-align: center;
+    background-color: rgba(46, 204, 113, 1);
+    border-left: 2px solid rgba(77, 175, 124, 1);
+    border-bottom: 4px solid rgba(77, 175, 124, 1);
+}
+
+.appliances {
+    display: flex;
+    flex-direction: column;
+    height: 90%;
+    background-color: #F0f0f0;
+}
+
+.appliance-item {
+    margin: auto;
+    border: 3px solid black;
+    padding: 10px;
+    width: 100px;
+    text-align: center;
+    border-radius: 5px;
+    color: white;
+    background-color: #5DCCED;
+    font-size: 15px;
+    font-family: Helvetica,Arial,Sans-Serif
+}
+
