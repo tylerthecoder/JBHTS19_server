@@ -18,6 +18,10 @@ export class WarehouseComponent implements OnInit {
   private map;
   private firstLoad = true;
 
+  private offStateIcon = 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FE7569';
+  private onStateIcon = 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FFFF33';
+  private colorChange = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
+
   private currentAppliance;
 
   private appliances = [
@@ -106,6 +110,12 @@ export class WarehouseComponent implements OnInit {
             onState: this.currentAppliance.isOn,
         });
 
+        if (marker.isOn === true) {
+          marker.setIcon('http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FFFF33');
+        } else {
+          marker.setIcon('http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FE7569');
+        }
+
         this.markers.push(marker);
 
         console.log(this.currentAppliance);
@@ -165,7 +175,14 @@ export class WarehouseComponent implements OnInit {
             title: this.currentAppliance.name,
             deviceId: this.currentAppliance.deviceId,
             onState: this.currentAppliance.isOn,
+            icon: 'http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FFFF33'
         });
+
+        if (marker.isOn === true) {
+          marker.setIcon('http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FFFF33');
+        } else {
+          marker.setIcon('http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FE7569');
+        }
 
         this.markers.push(marker);
 
