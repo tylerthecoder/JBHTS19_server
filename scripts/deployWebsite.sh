@@ -1,5 +1,6 @@
 cd ~/server/website/HackathonSpring2019
+rm -rf node_modules
 npm install
 ng build
 cd dist/HackathonSpring2019
-python -m SimpleHTTPServer 80
+sudo python -m SimpleHTTPServer 80

@@ -131,7 +131,6 @@ app.get("/device/metrics", async function(req, res) {
 });
 
 app.get("/device/allMetrics", async function(req, res) {
-  console.log("All Device Metrics");
   const metrics = await getAllMetrics();
   res.send(JSON.stringify(metrics));
 });
