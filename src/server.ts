@@ -4,15 +4,14 @@ import http from "http";
 import path from "path";
 import mongoose from "mongoose";
 import {
-  mockDevices,
   deleteAllDevices,
   setDeviceState,
   setDeviceCords,
-  mockDeviceUpdates,
   getDeviceUpdates,
   getDeviceMetrics,
   deleteAllDeviceUpdates
 } from "./deviceFuncs";
+import { mockDeviceUpdates, mockDevices } from "./deviceMocks";
 
 const app = express();
 const server = new http.Server(app);
@@ -35,6 +34,7 @@ app.get("/canvas", function(req, res) {
 });
 
 let theRate: number;
+
 app.get("/setLatLng", function(req, res) {
   const { lat, lng, rate } = req.query;
   theRate = parseFloat(rate);
@@ -69,14 +69,14 @@ app.get("/resetDeviceUpdate", async function(req, res) {
 });
 
 app.get("/setDeviceState", async function(req, res) {
-  const { id, state } = req.query;
-  console.log("set device state", id, state);
-  const device = await setDeviceState(id, state == "true" ? true : false);
+  const { deviceId, state } = req.query;
+  console.log("set device state", deviceId, state);
+  const device = await setDeviceState(deviceId, state == "true" ? true : false);
   const result = {
     deviceName: device.name,
     state: state == "true" ? true : false
   };
-  pythonSocket.emit("deviceUpdate", result);
+  if (pythonSocket) pythonSocket.emit("deviceUpdate", result);
   res.send("done");
 });
 

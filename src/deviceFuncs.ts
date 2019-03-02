@@ -12,10 +12,13 @@ export async function setDeviceCords(id: string, lat: string, lng: string) {
   return device;
 }
 
-export async function setDeviceState(id: string, state: boolean) {
-  const device = (await Device.findByIdAndUpdate(id, {
-    $set: { isOn: state }
-  })) as IDeviceModel;
+export async function setDeviceState(deviceId: string, state: boolean) {
+  const device = (await Device.findOneAndUpdate(
+    { deviceId },
+    {
+      $set: { isOn: state }
+    }
+  )) as IDeviceModel;
 
   const update = await DeviceUpdate.create({
     deviceId: device.deviceId,
@@ -83,38 +86,4 @@ export async function deleteAllDevices() {
 
 export async function deleteAllDeviceUpdates() {
   return await DeviceUpdate.deleteMany({});
-}
-
-export async function mockDevices() {
-  const d1 = await Device.create({
-    name: "light1",
-    deviceId: "123",
-    isOn: false,
-    watts: 100
-  });
-  await d1.save();
-
-  const d2 = await Device.create({
-    name: "turing",
-    deviceId: "321",
-    isOn: true,
-    watts: 10000
-  });
-  await d2.save();
-}
-
-export async function mockDeviceUpdates() {
-  const du1 = await DeviceUpdate.create({
-    deviceId: "123",
-    isOn: true,
-    time: 1551505267741
-  });
-  await du1.save();
-
-  const du2 = await DeviceUpdate.create({
-    deviceId: "123",
-    isOn: true,
-    time: 1551505279741
-  });
-  await du2.save();
 }
