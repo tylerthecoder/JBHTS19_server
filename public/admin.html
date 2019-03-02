@@ -12,8 +12,17 @@
     const data = await rawData.text();
     console.log(data);
   }
+
+  async function sendCoords() {
+    const url = `http://${location.host}/setLatLng?lat=36.066124&lng=-94.173790`;
+    const rawData = await fetch(url);
+    const data = await rawData.text();
+    console.log(data);
+  }
 </script>
 
 <button onclick="resetDevices()"> Reset Devices </button>
 
 <button onclick="allMetrics()"> Get All Metrics </button>
+
+<button onclick="sendCoords()"> Send Coords </button>
