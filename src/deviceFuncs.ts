@@ -64,16 +64,19 @@ export async function getDeviceMetrics(deviceId: string) {
     return time1 - time2;
   });
 
+  console.log(updates);
+
   let timeOn = 0;
   let lastState = false;
   let lastTime = 0;
   for (const update of updates) {
+    console.log(update);
     const time = new Date(update.time).getTime();
     if (lastState) {
       timeOn += time - lastTime;
     }
     lastState = update.isOn;
-    lastTime = time;
+    if (update.isOn) lastTime = time;
   }
 
   // if device currently on then add its time

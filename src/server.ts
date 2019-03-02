@@ -65,7 +65,7 @@ app.get("/device/resetUpdates", async function(req, res) {
   res.send("done");
 });
 
-app.get("/allDevices", async function(req, res) {
+app.get("/device/all", async function(req, res) {
   const data = await getAllDevices();
   res.send(JSON.stringify(data));
 });
@@ -97,7 +97,7 @@ app.get("/deviceUpdates", async function(req, res) {
   res.send(updates);
 });
 
-app.get("/deviceMetrics", async function(req, res) {
+app.get("/device/metrics", async function(req, res) {
   const { deviceId } = req.query;
   console.log("Device Metrics", deviceId);
   const metrics = await getDeviceMetrics(deviceId);
